@@ -1,5 +1,6 @@
 import { Elysia, t } from "elysia";
 import { plugin } from "./plugin";
+import { signInDto } from "./models";
 
 
 //APPLICATION
@@ -45,10 +46,8 @@ const app = new Elysia().get("/", () => "Hello Elysia")
 
 app.group('/user', app => app
 .post('/sign-in', ({body}) => body, {
-  body: t.Object({
-    username: t.String(),
-    password: t.String()
-  })
+  body: signInDto,
+  response: signInDto
 })
 .post('/sign-up', () => "Signup Route")
 .post('/profile', () => "Profile Route")
@@ -59,7 +58,13 @@ app.group('/v1', app => app
 .get('/', () => "Version 1")
 .group('/products', app => app
 .post('/', () => "Create Product")
-.get('/:id', () => "GET PRODUCT BY ID")
+.get('/:id', ({params: {id}}) => {
+  return id
+},{
+  params: t.Object({
+    id: t.Numeric()
+  })
+})
 .put('/:id', () => "UPDATE PRODUCT BY ID")
 .delete('/:id', () => "DELETE PRODUCT BY ID")))
 
